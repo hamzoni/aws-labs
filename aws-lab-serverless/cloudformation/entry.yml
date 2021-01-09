@@ -20,6 +20,7 @@ Resources:
 
   ServicesStack:
     Type: AWS::CloudFormation::Stack
+    DependsOn: VpcStack
     Properties:
       TemplateURL: https://aws-lab-cloudformation.s3-us-west-2.amazonaws.com/services.yml
       Parameters:
@@ -27,8 +28,7 @@ Resources:
         TagKey: !Ref TagKey
         TagValue: !Ref TagValue
         Vpc: !GetAtt VpcStack.Outputs.Vpc
-        Subnet1: !GetAtt VpcStack.Outputs.PrivateSubnet1
-        Subnet2: !GetAtt VpcStack.Outputs.PrivateSubnet2
+        EsSubnet: !GetAtt VpcStack.Outputs.PrivateSubnet1
         ElasticsearchSecurityGroup: !GetAtt VpcStack.Outputs.ElasticsearchSecurityGroup
       TimeoutInMinutes: 300
 
