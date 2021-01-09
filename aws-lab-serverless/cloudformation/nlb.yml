@@ -1,0 +1,39 @@
+
+Parameters:
+  StackName:
+    Type: String
+
+  TagKey:
+    Type: String
+  TagValue:
+    Type: String
+
+  Subnet1:
+    Type: String
+  Subnet2:
+    Type: String
+
+Resources:
+
+  Nlb:
+    Type: AWS::ElasticLoadBalancingV2::LoadBalancer
+    Properties: 
+      LoadBalancerAttributes: 
+        - Key: load_balancing.cross_zone.enabled
+          Value: true
+      Name: !Ref StackName
+      Scheme: internal
+      Subnets: 
+        - !Ref Subnet1
+        - !Ref Subnet2
+      Tags: 
+        - Key: !Ref TagKey
+          Value: !Ref TagValue
+      Type: network
+
+Outputs:
+  Nlb:
+    Description: Information about the value
+    Value: !Ref Nlb
+    Export:
+      Name: !Sub ${StackName}-nlb
