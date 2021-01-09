@@ -1,0 +1,89 @@
+Parameters:
+  StackName:
+    Type: String
+
+  TagKey:
+    Type: String
+  TagValue:
+    Type: String
+
+  EsDomain:
+    Type: String
+    Default: es.fptu.net
+  DomainAcmArn:
+    Type: String
+    Default: arn:aws:acm:us-west-2:900171207117:certificate/60fa02b4-870c-44be-85ca-3eb6aaf32f4e
+
+  Vpc:
+    Type: String
+  Subnet1:
+    Type: String
+  Subnet2:
+    Type: String
+
+  ElasticsearchSecurityGroup:
+    Type: String
+
+Resources:
+  Elasticsearch:
+    Type: AWS::Elasticsearch::Domain
+    Properties: 
+      AccessPolicies:
+        - Effect: Allow
+          Principal:
+            AWS:
+            - "*"
+          Action:
+          - es:*
+          Resource: !Sub arn:aws:es:${AWS::Region}:${AWS::AccountId}:domain/*
+      DomainEndpointOptions: 
+        CustomEndpoint: !Ref EsDomain
+        CustomEndpointCertificateArn: !Ref DomainAcmArn
+        CustomEndpointEnabled: true
+        EnforceHTTPS: true
+        TLSSecurityPolicy: 'Policy-Min-TLS-1-2-2019-07'
+      DomainName: !Ref StackName
+      EBSOptions: 
+        EBSEnabled: true
+        VolumeSize: 20
+        VolumeType: gp2
+      ElasticsearchVersion: String
+      SnapshotOptions: 
+        AutomatedSnapshotStartHour: 2
+      Tags: 
+        - Key: !Ref TagKey
+          Value: !Ref TagValue
+      VPCOptions:
+        SubnetIds:
+          - !Ref Subnet1
+          - !Ref Subnet2
+        SecurityGroupIds:
+          - !Ref ElasticsearchSecurityGroup
+      ElasticsearchClusterConfig:
+        InstanceCount: 1
+        InstanceType: t2.micro.elasticsearch
+      AdvancedOptions:
+        rest.action.multi.allow_explicit_index: 'true'
+
+Outputs:
+  ElasticsearchResourceName:
+    Description: Elasticsearch resource name
+    Value: !Ref Elasticsearch
+    Export:
+      Name: !Sub ${StackName}-ElasticsearchResourceName
+  ElasticsearchArn:
+    Description: Elasticsearch Arn
+    Value: !GetAtt Elasticsearch.Arn
+    Export:
+      Name: !Sub ${StackName}-ElasticsearchArn
+  ElasticsearchDomainArn:
+    Description: Elasticsearch DomainArn
+    Value: !GetAtt Elasticsearch.DomainArn
+    Export:
+      Name: !Sub ${StackName}-ElasticsearchDomainArn
+  ElasticsearchDomainEndpoint:
+    Description: Elasticsearch DomainEndpoint
+    Value: !GetAtt Elasticsearch.DomainEndpoint
+    Export:
+      Name: !Sub ${StackName}-ElasticsearchDomainEndpoint
+

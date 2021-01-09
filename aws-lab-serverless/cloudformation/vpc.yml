@@ -13,6 +13,10 @@ Parameters:
     Type: CommaDelimitedList
     Default: "10.0.0.0/16, 10.0.1.0/24, 10.0.2.0/24, 10.0.3.0/24, 10.0.4.0/24"
 
+  InternetCidrIpBlocks:
+    Type: String
+    Default: "0.0.0.0/0"
+
 Resources:
 
   # Vpc
@@ -103,7 +107,7 @@ Resources:
     Properties: 
       GatewayId: !Ref InternetGateway
       RouteTableId: !Ref PublicRouteTable
-      DestinationCidrBlock: '0.0.0.0/0'
+      DestinationCidrBlock: !Ref InternetCidrIpBlocks
 
   # Subnet-Route Table associations
   SubnetRouteTablePublic1:
@@ -142,6 +146,29 @@ Resources:
       RouteTableId: !Ref PrivateRouteTable
       SubnetId: !Ref PrivateSubnet2
 
+  # Security groups
+  ElasticsearchSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    DependsOn: Vpc
+    Properties: 
+      GroupDescription: Security group for Elasticsearch
+      GroupName: !Sub ${StackName}-es
+      SecurityGroupEgress: 
+        - CidrIp: !Ref InternetCidrIpBlocks
+          Description: Outbound anywhere
+          FromPort: -1
+          IpProtocol: -1
+          ToPort: -1
+      SecurityGroupIngress: 
+        - CidrIp: !GetAtt Vpc.CidrBlock
+          Description: Allow access within VPC to Elasticsearch through port 443
+          IpProtocol: tcp
+          FromPort: 443
+          ToPort: 443
+      Tags: 
+        - Key: !Ref TagKey
+          Value: !Ref TagValue
+      VpcId: !Ref Vpc
 Outputs:
   Vpc:
     Description: VPC
@@ -170,3 +197,10 @@ Outputs:
     Value: !Ref PrivateSubnet2
     Export:
       Name: !Sub ${StackName}-PrivateSubnet2
+
+  ElasticsearchSecurityGroup:
+    Description: Security group for Elasticsearch
+    Value: !Ref ElasticsearchSecurityGroup
+    Export:
+      Name: !Sub ${StackName}-ElasticsearchSecurityGroup
+

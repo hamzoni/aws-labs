@@ -18,5 +18,19 @@ Resources:
         TagValue: !Ref TagValue
       TimeoutInMinutes: 300
 
+  ServicesStack:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: https://aws-lab-cloudformation.s3-us-west-2.amazonaws.com/services.yml
+      Parameters:
+        StackName: !Ref AWS::StackName
+        TagKey: !Ref TagKey
+        TagValue: !Ref TagValue
+        Vpc: !GetAtt VpcStack.Outputs.Vpc
+        Subnet1: !GetAtt VpcStack.Outputs.PrivateSubnet1
+        Subnet2: !GetAtt VpcStack.Outputs.PrivateSubnet2
+        ElasticsearchSecurityGroup: !GetAtt VpcStack.Outputs.PrivateElasticsearchSecurityGroup
+      TimeoutInMinutes: 300
+
 
   
