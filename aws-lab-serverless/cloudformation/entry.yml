@@ -1,0 +1,8 @@
+
+Resources:
+  VpcStack:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: https://aws-lab-cloudformation.s3-us-west-2.amazonaws.com/vpc.yml
+      TimeoutInMinutes: 300
+

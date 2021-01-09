@@ -1,0 +1,45 @@
+
+Parameters: 
+  DbSubnetIpBlocks: 
+    Description: "CIDR Blocks for VPC and Subnets"
+    Type: CommaDelimitedList
+    Default: "10.0.0.0/16, 10.0.1.0/24, 10.0.2.0/24, 10.0.3.0/24, 10.0.4.0/24"
+
+Resources:
+
+  Vpc:
+    Type: AWS::EC2::VPC
+    Properties: 
+      CidrBlock: !Select [ 0, !Ref DbSubnetIpBlocks ]
+      EnableDnsHostnames: true
+      EnableDnsSupport: true
+
+  PublicSubnet1:
+    Type: AWS::EC2::Subnet
+    Properties: 
+      AvailabilityZone: !Select [ 0, !GetAZs: ""]
+      CidrBlock: !Select [ 0, !Ref DbSubnetIpBlocks ]
+      MapPublicIpOnLaunch: true
+      VpcId: !Ref Vpc
+  
+  PublicSubnet2:
+    Type: AWS::EC2::Subnet
+    Properties: 
+      AvailabilityZone: !Select [ 1, !GetAZs: ""]
+      CidrBlock: !Select [ 1, !Ref DbSubnetIpBlocks ]
+      MapPublicIpOnLaunch: true
+      VpcId: !Ref Vpc
+
+  PrivateSubnet1:
+    Type: AWS::EC2::Subnet
+    Properties: 
+      AvailabilityZone: !Select [ 0, !GetAZs: ""]
+      CidrBlock: !Select [ 3, !Ref DbSubnetIpBlocks ]
+      VpcId: !Ref Vpc
+
+  PrivateSubnet2:
+    Type: AWS::EC2::Subnet
+    Properties: 
+      AvailabilityZone: !Select [ 1, !GetAZs: ""]
+      CidrBlock: !Select [ 4, !Ref DbSubnetIpBlocks ]
+      VpcId: !Ref Vpc
