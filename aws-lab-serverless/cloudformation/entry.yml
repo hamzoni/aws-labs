@@ -18,17 +18,5 @@ Resources:
         TagValue: !Ref TagValue
       TimeoutInMinutes: 300
 
-  NlbStack:
-    Type: AWS::CloudFormation::Stack
-    Properties:
-      TemplateURL: https://aws-lab-cloudformation.s3-us-west-2.amazonaws.com/nlb.yml
-      Parameters:
-        StackName: !Ref AWS::StackName
-        TagKey: !Ref TagKey
-        TagValue: !Ref TagValue
-        Vpc: !GetAtt VpcStack.Outputs.Vpc
-        PrivateSubnet1: !GetAtt VpcStack.Outputs.Subnet1
-        PrivateSubnet2: !GetAtt VpcStack.Outputs.Subnet2
-      TimeoutInMinutes: 300
 
   
