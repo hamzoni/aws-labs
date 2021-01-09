@@ -25,17 +25,131 @@ Parameters:
     Type: String
 
 Resources:
+  InventoryBucket:
+    Type: AWS::S3::Bucket
+    Properties: 
+      BucketName: !Sub ${StackName}-inventory-bucket
+      LifecycleConfiguration: 
+        Rules: 
+          - Id: TransitionOfObject
+            Status: Enabled
+            Transitions: 
+              - StorageClass: INTELLIGENT_TIERING
+                TransitionInDays: 7
+              - StorageClass: GLACIER
+                TransitionInDays: 90
+              - StorageClass: DEEP_ARCHIVE
+                TransitionInDays: 180
+      Tags: 
+        - Key: !Ref TagKey
+          Value: !Ref TagValue
+
+  LoggingBucket:
+    Type: AWS::S3::Bucket
+    Properties: 
+      BucketName: !Sub ${StackName}-logging-bucket
+      LifecycleConfiguration: 
+        Rules: 
+          - Id: TransitionOfObject
+            Status: Enabled
+            Transitions: 
+              - StorageClass: INTELLIGENT_TIERING
+                TransitionInDays: 7
+              - StorageClass: GLACIER
+                TransitionInDays: 90
+              - StorageClass: DEEP_ARCHIVE
+                TransitionInDays: 180
+      Tags: 
+        - Key: !Ref TagKey
+          Value: !Ref TagValue
+
+  MasterBucket:
+    Type: AWS::S3::Bucket
+    DependsOn:
+      - InventoryBucket
+      - LoggingBucket
+    Properties: 
+      BucketName: !Sub ${StackName}-master-bucket
+      IntelligentTieringConfigurations: 
+        - Id: ArchiveToGlacierAfter90Days
+          Status: Enabled
+          Tierings: 
+            - AccessTier: ARCHIVE_ACCESS
+              Days: 180
+        - Id: ArchiveToDeepGlacierAfter180Days
+          Status: Enabled
+          Tierings: 
+            - AccessTier: DEEP_ARCHIVE_ACCESS
+              Days: 365
+      InventoryConfigurations: 
+        - Destination: 
+            BucketAccountId: !Ref AWS::AccountId
+            BucketArn: !GetAtt InventoryBucket.Arn
+            Format: CSV
+            Prefix: !Sub ${StackName}-master-bucket
+          Enabled: true
+          Id: MasterBucketInventoryConfig
+          IncludedObjectVersions: All
+          ScheduleFrequency: Daily
+      LifecycleConfiguration: 
+        Rules: 
+          - AbortIncompleteMultipartUpload: 
+              DaysAfterInitiation: 7
+            ExpirationInDays: 7
+            Id: DeleteExpiredMultipartUpload
+            Status: Enabled
+          - Id: RetentionOfOldVersion
+            NoncurrentVersionExpirationInDays: 700 # keep older version up to 2 years
+          - Id: TransitionOfOldVersion
+            NoncurrentVersionTransitions: 
+              - StorageClass: INTELLIGENT_TIERING
+                TransitionInDays: 7
+              - StorageClass: GLACIER
+                TransitionInDays: 90
+              - StorageClass: DEEP_ARCHIVE
+                TransitionInDays: 180
+            Status: Enabled
+          - ExpirationInDays: 3650 # keep objects for maximum up to 10 years
+            Id: RetentionOfObject
+            Status: Enabled
+          - Id: TransitionOfObject
+            Status: Enabled
+            Transitions: 
+              - StorageClass: INTELLIGENT_TIERING
+                TransitionInDays: 30
+              - StorageClass: GLACIER
+                TransitionInDays: 180
+              - StorageClass: DEEP_ARCHIVE
+                TransitionInDays: 365
+      LoggingConfiguration: 
+        DestinationBucketName: !Ref LoggingBucket
+        LogFilePrefix: !Sub ${StackName}-master-bucket
+      OwnershipControls: 
+        Rules: 
+          - ObjectOwnership: BucketOwnerPreferred
+      PublicAccessBlockConfiguration: 
+        BlockPublicAcls: true
+        BlockPublicPolicy: true
+        IgnorePublicAcls: true
+        RestrictPublicBuckets: true
+      Tags: 
+        - Key: !Ref TagKey
+          Value: !Ref TagValue
+      VersioningConfiguration: 
+        Status: Enabled
+
   Elasticsearch:
     Type: AWS::Elasticsearch::Domain
     Properties: 
       AccessPolicies:
-        - Effect: Allow
-          Principal:
-            AWS:
-            - "*"
-          Action:
-          - es:*
-          Resource: !Sub arn:aws:es:${AWS::Region}:${AWS::AccountId}:domain/*
+        Version: "2012-10-17"
+        Statement:
+          -
+            Effect: "Allow"
+            Principal:
+              AWS: "*"
+            Action: "es:*"
+            Resource: !Sub arn:aws:es:${AWS::Region}:${AWS::AccountId}:domain/*
       DomainEndpointOptions: 
         CustomEndpoint: !Ref EsDomain
         CustomEndpointCertificateArn: !Ref DomainAcmArn
@@ -47,7 +161,7 @@ Resources:
         EBSEnabled: true
         VolumeSize: 20
         VolumeType: gp2
-      ElasticsearchVersion: String
+      ElasticsearchVersion: 7.9
       SnapshotOptions: 
         AutomatedSnapshotStartHour: 2
       Tags: 
@@ -61,7 +175,7 @@ Resources:
           - !Ref ElasticsearchSecurityGroup
       ElasticsearchClusterConfig:
         InstanceCount: 1
-        InstanceType: t2.micro.elasticsearch
+        InstanceType: t3.medium.elasticsearch
       AdvancedOptions:
         rest.action.multi.allow_explicit_index: 'true'
 

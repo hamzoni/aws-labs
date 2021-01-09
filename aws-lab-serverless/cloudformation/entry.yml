@@ -29,7 +29,7 @@ Resources:
         Vpc: !GetAtt VpcStack.Outputs.Vpc
         Subnet1: !GetAtt VpcStack.Outputs.PrivateSubnet1
         Subnet2: !GetAtt VpcStack.Outputs.PrivateSubnet2
-        ElasticsearchSecurityGroup: !GetAtt VpcStack.Outputs.PrivateElasticsearchSecurityGroup
+        ElasticsearchSecurityGroup: !GetAtt VpcStack.Outputs.ElasticsearchSecurityGroup
       TimeoutInMinutes: 300
 
 
