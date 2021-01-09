@@ -8,6 +8,8 @@ Parameters:
   TagValue:
     Type: String
 
+  Vpc:
+    Type: String
   Subnet1:
     Type: String
   Subnet2:
@@ -31,6 +33,36 @@ Resources:
           Value: !Ref TagValue
       Type: network
 
+  TargetGroup:
+    Type: AWS::ElasticLoadBalancingV2::TargetGroup
+    Properties: 
+      Name: !Ref StackName
+      Tags: 
+        - Key: !Ref TagKey
+          Value: !Ref TagValue
+      TargetGroupAttributes: 
+        - Key: deregistration_delay.connection_termination.enabled
+          Value: true
+      TargetType: lambda
+      VpcId: !Ref Vpc
+
+  # Listener
+  # https://docs.aws.amazon.com/elasticloadbalancing/latest/application/listener-authenticate-users.html
+  Listener:
+    Type: AWS::ElasticLoadBalancingV2::Listener
+    DependsOn:
+      - Nlb
+      - TargetGroup
+    Properties: 
+      DefaultActions: 
+        - ForwardConfig: 
+            ForwardConfig
+          TargetGroupArn: !Ref TargetGroup
+          Type: forward
+      LoadBalancerArn: !Ref Nlb
+      Port: 80
+      Protocol: String
+      SslPolicy: String
 Outputs:
   Nlb:
     Description: Information about the value

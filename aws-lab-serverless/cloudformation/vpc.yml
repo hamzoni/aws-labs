@@ -29,6 +29,7 @@ Resources:
   # Subnets
   PublicSubnet1:
     Type: AWS::EC2::Subnet
+    DependsOn: Vpc
     Properties: 
       AvailabilityZone: !Select [ 0, !GetAZs ""]
       CidrBlock: !Select [ 1, !Ref DbSubnetIpBlocks ]
@@ -37,6 +38,7 @@ Resources:
   
   PublicSubnet2:
     Type: AWS::EC2::Subnet
+    DependsOn: Vpc
     Properties: 
       AvailabilityZone: !Select [ 1, !GetAZs ""]
       CidrBlock: !Select [ 2, !Ref DbSubnetIpBlocks ]
@@ -45,6 +47,7 @@ Resources:
 
   PrivateSubnet1:
     Type: AWS::EC2::Subnet
+    DependsOn: Vpc
     Properties: 
       AvailabilityZone: !Select [ 0, !GetAZs ""]
       CidrBlock: !Select [ 3, !Ref DbSubnetIpBlocks ]
@@ -52,6 +55,7 @@ Resources:
 
   PrivateSubnet2:
     Type: AWS::EC2::Subnet
+    DependsOn: Vpc
     Properties: 
       AvailabilityZone: !Select [ 1, !GetAZs ""]
       CidrBlock: !Select [ 4, !Ref DbSubnetIpBlocks ]
@@ -64,6 +68,15 @@ Resources:
       Tags: 
         - Key: !Ref TagKey
           Value: !Ref TagValue
+
+  VPCGatewayAttachment:
+    Type: AWS::EC2::VPCGatewayAttachment
+    DependsOn: 
+      - InternetGateway
+      - Vpc
+    Properties: 
+      InternetGatewayId: !Ref InternetGateway
+      VpcId: !Ref Vpc
 
   # Route Tables
   PublicRouteTable:
@@ -85,6 +98,8 @@ Resources:
   # Routes
   InternetGatewayPublicRouteTable:
     Type: AWS::EC2::Route
+    DependsOn: 
+      - VPCGatewayAttachment
     Properties: 
       GatewayId: !Ref InternetGateway
       RouteTableId: !Ref PublicRouteTable
@@ -93,29 +108,46 @@ Resources:
   # Subnet-Route Table associations
   SubnetRouteTablePublic1:
     Type: AWS::EC2::SubnetRouteTableAssociation
+    DependsOn: 
+      - PublicRouteTable
+      - PublicSubnet1
     Properties: 
       RouteTableId: !Ref PublicRouteTable
       SubnetId: !Ref PublicSubnet1
 
   SubnetRouteTablePublic2:
     Type: AWS::EC2::SubnetRouteTableAssociation
+    DependsOn: 
+      - PublicRouteTable
+      - PublicSubnet2
     Properties: 
       RouteTableId: !Ref PublicRouteTable
       SubnetId: !Ref PublicSubnet2
 
   SubnetRouteTablePrivate1:
     Type: AWS::EC2::SubnetRouteTableAssociation
+    DependsOn: 
+      - PrivateRouteTable
+      - PrivateSubnet1
     Properties: 
       RouteTableId: !Ref PrivateRouteTable
       SubnetId: !Ref PrivateSubnet1
       
   SubnetRouteTablePrivate2:
     Type: AWS::EC2::SubnetRouteTableAssociation
+    DependsOn: 
+      - PrivateRouteTable
+      - PrivateSubnet2
     Properties: 
       RouteTableId: !Ref PrivateRouteTable
       SubnetId: !Ref PrivateSubnet2
 
 Outputs:
+  Vpc:
+    Description: VPC
+    Value: !Ref Vpc
+    Export:
+      Name: !Sub ${StackName}-Vpc
 
   PublicSubnet1:
     Description: Public subnet 1
