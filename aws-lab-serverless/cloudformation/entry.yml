@@ -1,8 +1,21 @@
 
+Parameters:
+  TagKey:
+    Type: String
+    Default: Project
+  TagValue:
+    Type: String
+    Default: aws-serverless-lab
+
 Resources:
   VpcStack:
     Type: AWS::CloudFormation::Stack
     Properties:
       TemplateURL: https://aws-lab-cloudformation.s3-us-west-2.amazonaws.com/vpc.yml
+      Parameters:
+        StackName: !Ref AWS::StackName
+        TagKey: !Ref TagKey
+        TagValue: !Ref TagValue
       TimeoutInMinutes: 300
 
+  

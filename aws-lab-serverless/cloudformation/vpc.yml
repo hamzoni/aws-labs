@@ -1,5 +1,13 @@
 
-Parameters: 
+Parameters:
+  StackName:
+    Type: String
+
+  TagKey:
+    Type: String
+  TagValue:
+    Type: String
+
   DbSubnetIpBlocks: 
     Description: "CIDR Blocks for VPC and Subnets"
     Type: CommaDelimitedList
@@ -7,17 +15,22 @@ Parameters:
 
 Resources:
 
+  # Vpc
   Vpc:
     Type: AWS::EC2::VPC
     Properties: 
       CidrBlock: !Select [ 0, !Ref DbSubnetIpBlocks ]
       EnableDnsHostnames: true
       EnableDnsSupport: true
+      Tags: 
+        - Key: !Ref TagKey
+          Value: !Ref TagValue
 
+  # Subnets
   PublicSubnet1:
     Type: AWS::EC2::Subnet
     Properties: 
-      AvailabilityZone: !Select [ 0, !GetAZs: ""]
+      AvailabilityZone: !Select [ 0, !GetAZs ""]
       CidrBlock: !Select [ 0, !Ref DbSubnetIpBlocks ]
       MapPublicIpOnLaunch: true
       VpcId: !Ref Vpc
@@ -43,3 +56,60 @@ Resources:
       AvailabilityZone: !Select [ 1, !GetAZs: ""]
       CidrBlock: !Select [ 4, !Ref DbSubnetIpBlocks ]
       VpcId: !Ref Vpc
+
+  # Internet gateway
+  InternetGateway:
+    Type: AWS::EC2::InternetGateway
+    Properties: 
+      Tags: 
+        - Key: !Ref TagKey
+          Value: !Ref TagValue
+
+  # Route Tables
+  PublicRouteTable:
+    Type: AWS::EC2::RouteTable
+    Properties: 
+      Tags: 
+        - Key: !Ref TagKey
+          Value: !Ref TagValue
+      VpcId: !Ref Vpc
+
+  PrivateRouteTable:
+    Type: AWS::EC2::RouteTable
+    Properties: 
+      Tags: 
+        - Key: !Ref TagKey
+          Value: !Ref TagValue
+      VpcId: !Ref Vpc
+
+  # Routes
+  InternetGatewayPublicRouteTable:
+    Type: AWS::EC2::Route
+    Properties: 
+      GatewayId: !Ref InternetGateway
+      RouteTableId: !Ref PublicRouteTable
+
+  # Subnet-Route Table associations
+  SubnetRouteTablePublic1:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties: 
+      RouteTableId: !Ref PublicRouteTable
+      SubnetId: !Ref PublicSubnet1
+
+  SubnetRouteTablePublic2:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties: 
+      RouteTableId: !Ref PublicRouteTable
+      SubnetId: !Ref PublicSubnet2
+
+  SubnetRouteTablePrivate1:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties: 
+      RouteTableId: !Ref PrivateRouteTable
+      SubnetId: !Ref PrivateSubnet1
+      
+  SubnetRouteTablePrivate2:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties: 
+      RouteTableId: !Ref PrivateRouteTable
+      SubnetId: !Ref PrivateSubnet2
