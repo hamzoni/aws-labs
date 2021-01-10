@@ -7,6 +7,9 @@ Parameters:
   TagValue:
     Type: String
 
+  ApiGatewayRole:
+    Type: String
+
 Resources:
   CognitoUserPool:
     Type: AWS::Cognito::UserPool
@@ -41,7 +44,7 @@ Resources:
       UsernameConfiguration: 
         CaseSensitive: false
       UserPoolAddOns: 
-        AdvancedSecurityMode: StrinOFFg
+        AdvancedSecurityMode: OFF
       UserPoolName: !Ref StackName
 
   RestApi:
@@ -52,7 +55,7 @@ Resources:
         - application/octet-stream
       Description: !Sub '${StackName} API Gateway'
       Name: !Ref StackName
-      Tags: 
+      Tags:
         - Key: !Ref TagKey
           Value: !Ref TagValue
 
@@ -62,15 +65,11 @@ Resources:
       - RestApi
       - CognitoUserPool
     Properties: 
-      AuthorizerCredentials: String
-      AuthorizerResultTtlInSeconds: Integer
-      AuthorizerUri: String
-      AuthType: String
-      IdentitySource: String
-      IdentityValidationExpression: String
-      Name: String
+      AuthorizerCredentials: !Ref ApiGatewayRole
+      IdentitySource: COGNITO_USER_POOLS
+      Name: !Ref StackName
       ProviderARNs: 
-        - String
+        - !Ref CognitoUserPool
       RestApiId: !Ref RestApi
       Type: COGNITO_USER_POOLS
 

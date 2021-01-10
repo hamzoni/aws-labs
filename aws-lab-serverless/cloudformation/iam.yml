@@ -1,0 +1,52 @@
+Parameters:
+  StackName:
+    Type: String
+
+  TagKey:
+    Type: String
+  TagValue:
+    Type: String
+
+Resources:
+  ApiGatewayPolicy:
+    Type: AWS::IAM::Policy
+    Properties: 
+      PolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Action: '*'
+            Resource: '*'
+      PolicyName: !Sub ${StackName}-ApiGatewayRole
+
+  ApiGatewayRole:
+    Type: AWS::IAM::Role
+    DependsOn:
+      - ApiGatewayPolicy
+    Properties: 
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement: 
+          - 
+            Effect: "Allow"
+            Principal: 
+              Service: 
+                - "apigateway.amazonaws.com"
+            Action: 
+              - "sts:AssumeRole"
+      Description: Role for API Gateway
+      MaxSessionDuration: 3600
+      Path: /
+      Policies: 
+        - !Ref ApiGatewayPolicy
+      RoleName: !Sub ${StackName}-ApiGatewayRole
+      Tags: 
+        - Key: !Ref TagKey
+          Value: !Ref TagValue
+
+Outputs:
+  ApiGatewayRole:
+    Description: ApiGatewayRole ARN
+    Value: !Ref ApiGatewayRole
+    Export:
+      Name: !Sub ${StackName}-ApiGatewayRole

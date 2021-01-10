@@ -48,8 +48,6 @@ Resources:
               KeyType: HASH # partition key
             - AttributeName: owner_name
               KeyType: RANGE # sort key
-            - AttributeName: price
-              KeyType: RANGE # sort key
           Projection: 
             ProjectionType: ALL
       GlobalSecondaryIndexes:
@@ -61,6 +59,9 @@ Resources:
               KeyType: RANGE # sort key
           Projection: 
             ProjectionType: ALL
+          ProvisionedThroughput:
+            ReadCapacityUnits: 1
+            WriteCapacityUnits: 1
       PointInTimeRecoverySpecification: 
         PointInTimeRecoveryEnabled: true
       ProvisionedThroughput: 
