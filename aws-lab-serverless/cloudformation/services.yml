@@ -23,46 +23,44 @@ Parameters:
     Type: String
 
 Resources:
-  # DynamoDbTable:
-  #   Type: AWS::DynamoDB::Table
-  #   Properties: 
-  #     AttributeDefinitions:
-  #       - AttributeName: owner_id
-  #         AttributeType: 'S'
-  #       - AttributeName: owner_name
-  #         AttributeType: 'S'
-  #         AttributeName: name
-  #         AttributeType: 'S'
-  #       - AttributeName: price
-  #         AttributeType: 'N'
-  #     BillingMode: PROVISIONED
-  #     KeySchema: 
-  #       - AttributeName: name
-  #         KeyType: HASH # partition key
-  #       - AttributeName: owner_id
-  #         KeyType: RANGE # sort key
-  #     LocalSecondaryIndexes: 
-  #       - IndexName: OwnerNameIndex
-  #         KeySchema: 
-  #           - AttributeName: name
-  #             KeyType: HASH # partition key
-  #           - AttributeName: owner_name
-  #             KeyType: RANGE # sort key
-  #         Projection: 
-  #           ProjectionType: ALL
-  #     PointInTimeRecoverySpecification: 
-  #       PointInTimeRecoveryEnabled: true
-  #     ProvisionedThroughput: 
-  #       ReadCapacityUnits: 1
-  #       WriteCapacityUnits: 1
-  #     StreamSpecification: 
-  #       StreamSpecification
-  #     TableName: !Ref StackName
-  #     Tags: 
-  #       - Key: !Ref TagKey
-  #         Value: !Ref TagValue
-  #     TimeToLiveSpecification: 
-  #       TimeToLiveSpecification
+  DynamoDbTable:
+    Type: AWS::DynamoDB::Table
+    Properties: 
+      AttributeDefinitions:
+        - AttributeName: owner_id
+          AttributeType: 'S'
+        - AttributeName: owner_name
+          AttributeType: 'S'
+        - AttributeName: name
+          AttributeType: 'S'
+        - AttributeName: price
+          AttributeType: 'N'
+      BillingMode: PROVISIONED
+      KeySchema: 
+        - AttributeName: name
+          KeyType: HASH # partition key
+        - AttributeName: owner_id
+          KeyType: RANGE # sort key
+      LocalSecondaryIndexes: 
+        - IndexName: OwnerNameIndex
+          KeySchema: 
+            - AttributeName: name
+              KeyType: HASH # partition key
+            - AttributeName: owner_name
+              KeyType: RANGE # sort key
+          Projection: 
+            ProjectionType: ALL
+      PointInTimeRecoverySpecification: 
+        PointInTimeRecoveryEnabled: true
+      ProvisionedThroughput: 
+        ReadCapacityUnits: 1
+        WriteCapacityUnits: 1
+      StreamSpecification: 
+        StreamViewType: NEW_AND_OLD_IMAGES
+      TableName: !Ref StackName
+      Tags: 
+        - Key: !Ref TagKey
+          Value: !Ref TagValue
 
   InventoryBucket:
     Type: AWS::S3::Bucket
@@ -87,6 +85,7 @@ Resources:
     Type: AWS::S3::Bucket
     Properties: 
       BucketName: !Sub ${StackName}-logging-bucket
+      AccessControl: LogDeliveryWrite
       LifecycleConfiguration: 
         Rules: 
           - Id: TransitionOfObject
