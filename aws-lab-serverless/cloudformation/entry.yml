@@ -18,11 +18,11 @@ Resources:
         TagValue: !Ref TagValue
       TimeoutInMinutes: 300
 
-  ServicesStack:
+  DatastoreServicesStack:
     Type: AWS::CloudFormation::Stack
     DependsOn: VpcStack
     Properties:
-      TemplateURL: https://aws-lab-cloudformation.s3-us-west-2.amazonaws.com/services.yml
+      TemplateURL: https://aws-lab-cloudformation.s3-us-west-2.amazonaws.com/datastore-services.yml
       Parameters:
         StackName: !Ref AWS::StackName
         TagKey: !Ref TagKey

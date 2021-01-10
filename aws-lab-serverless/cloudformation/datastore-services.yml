@@ -48,6 +48,17 @@ Resources:
               KeyType: HASH # partition key
             - AttributeName: owner_name
               KeyType: RANGE # sort key
+            - AttributeName: price
+              KeyType: RANGE # sort key
+          Projection: 
+            ProjectionType: ALL
+      GlobalSecondaryIndexes:
+        - IndexName: PriceIndex
+          KeySchema: 
+            - AttributeName: name
+              KeyType: HASH # partition key
+            - AttributeName: price
+              KeyType: RANGE # sort key
           Projection: 
             ProjectionType: ALL
       PointInTimeRecoverySpecification: 
@@ -218,6 +229,34 @@ Resources:
         rest.action.multi.allow_explicit_index: 'true'
 
 Outputs:
+
+  DynamoDbTable:
+    Description: DynamoDbTable name
+    Value: !Ref DynamoDbTable
+    Export:
+      Name: !Sub ${StackName}-DynamoDbTable
+  DynamoDbTableArn:
+    Description: DynamoDbTable Arn
+    Value: !GetAtt DynamoDbTable.Arn
+    Export:
+      Name: !Sub ${StackName}-DynamoDbTableArn
+  DynamoDbTableStreamArn:
+    Description: DynamoDbTable StreamArn
+    Value: !GetAtt DynamoDbTable.StreamArn
+    Export:
+      Name: !Sub ${StackName}-DynamoDbTableStreamArn
+
+  MasterBucketName:
+    Description: Master bucket name
+    Value: !Ref MasterBucket
+    Export:
+      Name: !Sub ${StackName}-MasterBucketName
+  MasterBucketArn:
+    Description: Master bucket ARN
+    Value: !Sub MasterBucket.Arn
+    Export:
+      Name: !Sub ${StackName}-MasterBucketArn
+
   ElasticsearchResourceName:
     Description: Elasticsearch resource name
     Value: !Ref Elasticsearch

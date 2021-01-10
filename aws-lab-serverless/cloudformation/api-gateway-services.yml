@@ -1,0 +1,103 @@
+Parameters:
+  StackName:
+    Type: String
+
+  TagKey:
+    Type: String
+  TagValue:
+    Type: String
+
+Resources:
+  CognitoUserPool:
+    Type: AWS::Cognito::UserPool
+    Properties: 
+      AccountRecoverySetting: 
+        RecoveryMechanisms: 
+          - Name: verified_email
+            Priority: 1
+          - Name: admin_only
+            Priority: 2
+      AdminCreateUserConfig: 
+        AllowAdminCreateUserOnly: false
+        UnusedAccountValidityDays: 7
+      AliasAttributes: 
+        - email
+      AutoVerifiedAttributes: 
+        - phone_number
+      DeviceConfiguration: 
+        ChallengeRequiredOnNewDevice: false
+        DeviceOnlyRememberedOnUserPrompt: false
+      MfaConfiguration: OFF
+      Policies:
+        PasswordPolicy: 
+          MinimumLength: 6
+          RequireLowercase: false
+          RequireNumbers: false
+          RequireSymbols: false
+          RequireUppercase: false
+          TemporaryPasswordValidityDays: 7
+      UsernameAttributes: 
+        - email
+      UsernameConfiguration: 
+        CaseSensitive: false
+      UserPoolAddOns: 
+        AdvancedSecurityMode: StrinOFFg
+      UserPoolName: !Ref StackName
+
+  RestApi:
+    Type: AWS::ApiGateway::RestApi
+    Properties: 
+      BinaryMediaTypes: 
+        - image/png
+        - application/octet-stream
+      Description: !Sub '${StackName} API Gateway'
+      Name: !Ref StackName
+      Tags: 
+        - Key: !Ref TagKey
+          Value: !Ref TagValue
+
+  AgwAuthorizer:
+    Type: AWS::ApiGateway::Authorizer
+    DependsOn:
+      - RestApi
+      - CognitoUserPool
+    Properties: 
+      AuthorizerCredentials: String
+      AuthorizerResultTtlInSeconds: Integer
+      AuthorizerUri: String
+      AuthType: String
+      IdentitySource: String
+      IdentityValidationExpression: String
+      Name: String
+      ProviderARNs: 
+        - String
+      RestApiId: !Ref RestApi
+      Type: COGNITO_USER_POOLS
+
+  AgwResource:
+    Type: AWS::ApiGateway::Resource
+    Properties: 
+      ParentId: String
+      PathPart: String
+      RestApiId: String
+
+  AgwMethod:
+    Type: AWS::ApiGateway::Method
+    Properties: 
+      AuthorizationScopes: 
+        - String
+      AuthorizationType: COGNITO_USER_POOLS
+      AuthorizerId: String
+      HttpMethod: String
+      Integration: 
+        Integration
+      MethodResponses: 
+        - MethodResponse
+      OperationName: String
+      RequestModels: 
+        Key : Value
+      RequestParameters: 
+        Key : Value
+      RequestValidatorId: String
+      ResourceId: String
+      RestApiId: String
