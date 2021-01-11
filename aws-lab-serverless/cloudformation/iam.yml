@@ -7,7 +7,46 @@ Parameters:
   TagValue:
     Type: String
 
-Resources:
+Resources:  
+
+  # Lambda Execution Role
+  LambdaPolicy:
+    Type: AWS::IAM::Policy
+    DependsOn:
+      - LambdaRole
+    Properties: 
+      PolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Action: '*'
+            Resource: '*'
+      PolicyName: !Sub ${StackName}-LambdaPolicy
+      Roles:
+        - !Ref LambdaRole
+
+  LambdaRole:
+    Type: AWS::IAM::Role
+    Properties: 
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement: 
+          - 
+            Effect: "Allow"
+            Principal: 
+              Service: 
+                - "lambda.amazonaws.com"
+            Action: 
+              - "sts:AssumeRole"
+      Description: Role for Lambda
+      MaxSessionDuration: 3600
+      RoleName: !Sub ${StackName}-LambdaRole
+      Path: /
+      Tags: 
+        - Key: !Ref TagKey
+          Value: !Ref TagValue
+
+  # API Gateway Role
   ApiGatewayPolicy:
     Type: AWS::IAM::Policy
     DependsOn:
@@ -50,3 +89,9 @@ Outputs:
     Value: !Ref ApiGatewayRole
     Export:
       Name: !Sub ${StackName}-ApiGatewayRole
+
+  LambdaRole:
+    Description: LambdaRole ARN
+    Value: !Ref LambdaRole
+    Export:
+      Name: !Sub ${StackName}-LambdaRole

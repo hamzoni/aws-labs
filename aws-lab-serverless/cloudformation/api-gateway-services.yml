@@ -23,6 +23,7 @@ Resources:
       AdminCreateUserConfig: 
         AllowAdminCreateUserOnly: false
         UnusedAccountValidityDays: 7
+      MfaConfiguration: OFF
       AliasAttributes: 
         - email
       AutoVerifiedAttributes: 
