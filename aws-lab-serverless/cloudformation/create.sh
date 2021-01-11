@@ -6,7 +6,7 @@ aws s3 sync . s3://aws-lab-cloudformation \
 TEMPLATE_URL=https://aws-lab-cloudformation.s3-us-west-2.amazonaws.com/entry.yml
 
 aws cloudformation create-stack \
-	--capabilities CAPABILITY_IAM \
+	--capabilities CAPABILITY_NAMED_IAM \
 	--stack-name $1 \
 	--template-body file://./entry.yml \
 	--region us-west-2 \

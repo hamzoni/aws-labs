@@ -73,30 +73,39 @@ Resources:
       RestApiId: !Ref RestApi
       Type: COGNITO_USER_POOLS
 
-  AgwResource:
+  # API Gateway Resource
+  AgwBookResource:
     Type: AWS::ApiGateway::Resource
+    DependsOn: RestApi
     Properties: 
-      ParentId: String
-      PathPart: String
-      RestApiId: String
+      ParentId: !GetAtt RestApi.RootResourceId
+      PathPart: /books
+      RestApiId: !Ref RestApi
 
-  AgwMethod:
-    Type: AWS::ApiGateway::Method
+  AgwImageResource:
+    Type: AWS::ApiGateway::Resource
+    DependsOn: RestApi
     Properties: 
-      AuthorizationScopes: 
-        - String
-      AuthorizationType: COGNITO_USER_POOLS
-      AuthorizerId: String
-      HttpMethod: String
-      Integration: 
-        Integration
-      MethodResponses: 
-        - MethodResponse
-      OperationName: String
-      RequestModels: 
-        Key : Value
-      RequestParameters: 
-        Key : Value
-      RequestValidatorId: String
-      ResourceId: String
-      RestApiId: String
+      ParentId: !GetAtt RestApi.RootResourceId
+      PathPart: /images
+      RestApiId: !Ref RestApi
+
+  # API Gateway Method
+  # AgwMethodInsertBook:
+  #   Type: AWS::ApiGateway::Method
+  #   DependsOn:
+  #     - AgwAuthorizer
+  #   Properties: 
+  #     AuthorizationType: COGNITO_USER_POOLS
+  #     AuthorizerId: !Ref AgwAuthorizer
+  #     HttpMethod: String
+  #     Integration: 
+  #       ConnectionType: INTERNET
+  #       ContentHandling: CONVERT_TO_TEXT
+  #       IntegrationHttpMethod: POST
+  #       TimeoutInMillis: 29000
+  #       Type: AWS_PROXY
+  #       Uri: String
+  #     OperationName: InsertBook
+  #     ResourceId: !Ref AgwBookResource
+  #     RestApiId: !Ref RestApi

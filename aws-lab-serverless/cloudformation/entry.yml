@@ -29,10 +29,25 @@ Resources:
         TagValue: !Ref TagValue
       TimeoutInMinutes: 300
 
-  DatastoreServicesStack:
+  # DatastoreServicesStack:
+  #   Type: AWS::CloudFormation::Stack
+  #   DependsOn: 
+  #     - VpcStack
+  #   Properties:
+  #     TemplateURL: https://aws-lab-cloudformation.s3-us-west-2.amazonaws.com/datastore-services.yml
+  #     Parameters:
+  #       StackName: !Ref AWS::StackName
+  #       TagKey: !Ref TagKey
+  #       TagValue: !Ref TagValue
+  #       Vpc: !GetAtt VpcStack.Outputs.Vpc
+  #       EsSubnet: !GetAtt VpcStack.Outputs.PrivateSubnet1
+  #       ElasticsearchSecurityGroup: !GetAtt VpcStack.Outputs.ElasticsearchSecurityGroup
+  #     TimeoutInMinutes: 300
+
+  ApiGatewayServicesStack:
     Type: AWS::CloudFormation::Stack
     DependsOn: 
-      - VpcStack
+      - IamStack
     Properties:
       TemplateURL: https://aws-lab-cloudformation.s3-us-west-2.amazonaws.com/datastore-services.yml
       Parameters:
@@ -40,7 +55,5 @@ Resources:
         TagKey: !Ref TagKey
         TagValue: !Ref TagValue
         Vpc: !GetAtt VpcStack.Outputs.Vpc
-        EsSubnet: !GetAtt VpcStack.Outputs.PrivateSubnet1
-        ElasticsearchSecurityGroup: !GetAtt VpcStack.Outputs.ElasticsearchSecurityGroup
-        # ApiGatewayRole: !GetAtt IamStack.ApiGatewayRole
+        ApiGatewayRole: !GetAtt IamStack.ApiGatewayRole
       TimeoutInMinutes: 300

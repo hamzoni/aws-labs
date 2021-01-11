@@ -10,6 +10,8 @@ Parameters:
 Resources:
   ApiGatewayPolicy:
     Type: AWS::IAM::Policy
+    DependsOn:
+      - ApiGatewayRole
     Properties: 
       PolicyDocument:
         Version: 2012-10-17
@@ -17,12 +19,12 @@ Resources:
           - Effect: Allow
             Action: '*'
             Resource: '*'
-      PolicyName: !Sub ${StackName}-ApiGatewayRole
+      PolicyName: !Sub ${StackName}-ApiGatewayPolicy
+      Roles:
+        - !Ref ApiGatewayRole
 
   ApiGatewayRole:
     Type: AWS::IAM::Role
-    DependsOn:
-      - ApiGatewayPolicy
     Properties: 
       AssumeRolePolicyDocument:
         Version: "2012-10-17"
@@ -36,10 +38,8 @@ Resources:
               - "sts:AssumeRole"
       Description: Role for API Gateway
       MaxSessionDuration: 3600
-      Path: /
-      Policies: 
-        - !Ref ApiGatewayPolicy
       RoleName: !Sub ${StackName}-ApiGatewayRole
+      Path: /
       Tags: 
         - Key: !Ref TagKey
           Value: !Ref TagValue
