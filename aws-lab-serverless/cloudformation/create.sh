@@ -1,9 +1,9 @@
 #!/bin/bash
 
 aws s3 sync . s3://aws-lab-cloudformation \
-  --profile pharos-cross
+  --profile pharos-cross && 
 
-TEMPLATE_URL=https://aws-lab-cloudformation.s3-us-west-2.amazonaws.com/entry.yml
+TEMPLATE_URL=https://aws-lab-cloudformation.s3-us-west-2.amazonaws.com/entry.yml &&
 
 aws cloudformation create-stack \
 	--capabilities CAPABILITY_NAMED_IAM \

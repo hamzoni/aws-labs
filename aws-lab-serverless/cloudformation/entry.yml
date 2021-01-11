@@ -48,16 +48,16 @@ Resources:
     Type: AWS::CloudFormation::Stack
     DependsOn: 
       - IamStack
-      - Vpc
+      - VpcStack
     Properties:
       TemplateURL: https://aws-lab-cloudformation.s3-us-west-2.amazonaws.com/api-gateway-services.yml
       Parameters:
         StackName: !Ref AWS::StackName
         TagKey: !Ref TagKey
         TagValue: !Ref TagValue
-        Vpc: !GetAtt Vpc.Outputs.Vpc
+        Vpc: !GetAtt VpcStack.Outputs.Vpc
         VpceSubnet: !GetAtt VpcStack.Outputs.PrivateSubnet1
-        VpceSecurityGroup: !GetAtt Vpc.Outputs.VpceSecurityGroup
-        VpceRouteTable: !GetAtt Vpc.Outputs.PrivateRouteTable
+        VpceSecurityGroup: !GetAtt VpcStack.Outputs.VpceSecurityGroup
+        VpceRouteTable: !GetAtt VpcStack.Outputs.PrivateRouteTable
         ApiGatewayRole: !GetAtt IamStack.Outputs.ApiGatewayRole
       TimeoutInMinutes: 300
