@@ -55,8 +55,5 @@ Resources:
         StackName: !Ref AWS::StackName
         TagKey: !Ref TagKey
         TagValue: !Ref TagValue
-        Vpc: !GetAtt VpcStack.Outputs.Vpc
-        VpceSubnet: !GetAtt VpcStack.Outputs.PrivateSubnet1
-        VpceRouteTable: !GetAtt VpcStack.Outputs.PrivateRouteTable
         ApiGatewayRole: !GetAtt IamStack.Outputs.ApiGatewayRole
       TimeoutInMinutes: 300

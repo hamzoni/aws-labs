@@ -31,7 +31,6 @@ Resources:
       DeviceConfiguration: 
         ChallengeRequiredOnNewDevice: false
         DeviceOnlyRememberedOnUserPrompt: false
-      MfaConfiguration: OFF
       Policies:
         PasswordPolicy: 
           MinimumLength: 6
@@ -44,8 +43,6 @@ Resources:
         - email
       UsernameConfiguration: 
         CaseSensitive: false
-      UserPoolAddOns: 
-        AdvancedSecurityMode: OFF
       UserPoolName: !Ref StackName
 
   RestApi:

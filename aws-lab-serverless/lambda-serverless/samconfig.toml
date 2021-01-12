@@ -1,0 +1,11 @@
+version = 0.1
+[default]
+[default.deploy]
+[default.deploy.parameters]
+stack_name = "taquy"
+s3_bucket = "aws-sam-cli-managed-default-samclisourcebucket-1r0o7bj9brj1j"
+s3_prefix = "taquy"
+region = "us-west-2"
+confirm_changeset = true
+capabilities = "CAPABILITY_IAM"
+profile = "pharos-cross"
