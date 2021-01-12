@@ -160,7 +160,7 @@ Resources:
           IpProtocol: -1
           ToPort: -1
       SecurityGroupIngress: 
-        - CidrIp: !Ref Vpc.CidrBlock
+        - CidrIp: !GetAtt Vpc.CidrBlock
           Description: Allow access within VPC to Elasticsearch through port 443
           IpProtocol: tcp
           FromPort: 443
@@ -175,7 +175,7 @@ Resources:
     DependsOn: Vpc
     Properties: 
       GroupDescription: Security group for Elasticsearch
-      GroupName: !Sub ${StackName}-es
+      GroupName: !Sub ${StackName}-vpce
       SecurityGroupEgress: 
         - CidrIp: !Ref InternetCidrIpBlocks
           Description: Outbound anywhere
@@ -183,7 +183,7 @@ Resources:
           IpProtocol: -1
           ToPort: -1
       SecurityGroupIngress: 
-        - CidrIp: !Ref Vpc.CidrBlock
+        - CidrIp: !GetAtt Vpc.CidrBlock
           Description: Allow access within VPC to Elasticsearch through port 443
           IpProtocol: tcp
           FromPort: -1
