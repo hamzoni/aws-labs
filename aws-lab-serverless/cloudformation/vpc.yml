@@ -170,47 +170,15 @@ Resources:
           Value: !Ref TagValue
       VpcId: !Ref Vpc
 
-  VpceSecurityGroup:
-    Type: AWS::EC2::SecurityGroup
-    DependsOn: Vpc
-    Properties: 
-      GroupDescription: Security group for Elasticsearch
-      GroupName: !Sub ${StackName}-vpce
-      SecurityGroupEgress: 
-        - CidrIp: !Ref InternetCidrIpBlocks
-          Description: Outbound anywhere
-          FromPort: -1
-          IpProtocol: -1
-          ToPort: -1
-      SecurityGroupIngress: 
-        - CidrIp: !GetAtt Vpc.CidrBlock
-          Description: Allow access within VPC to Elasticsearch through port 443
-          IpProtocol: tcp
-          FromPort: -1
-          ToPort: -1
-      Tags: 
-        - Key: !Ref TagKey
-          Value: !Ref TagValue
-      VpcId: !Ref Vpc
-
   # VPC Endpoints
   VPCEndpointS3:
     Type: AWS::EC2::VPCEndpoint
     DependsOn:
       - PrivateRouteTable
-      - PrivateSubnet1
-      - PrivateSubnet2
-      - VpceSecurityGroup
     Properties: 
-      PrivateDnsEnabled: true
       RouteTableIds: 
         - !Ref PrivateRouteTable
-      SecurityGroupIds: 
-        - !Ref VpceSecurityGroup
       ServiceName: !Sub com.amazonaws.${AWS::Region}.dynamodb
-      SubnetIds: 
-        - !Ref PrivateSubnet1
-        - !Ref PrivateSubnet2
       VpcEndpointType: Gateway
       VpcId: !Ref Vpc
 
@@ -218,19 +186,10 @@ Resources:
     Type: AWS::EC2::VPCEndpoint
     DependsOn:
       - PrivateRouteTable
-      - PrivateSubnet1
-      - PrivateSubnet2
-      - VpceSecurityGroup
     Properties: 
-      PrivateDnsEnabled: true
       RouteTableIds: 
         - !Ref PrivateRouteTable
-      SecurityGroupIds: 
-        - !Ref VpceSecurityGroup
       ServiceName: !Sub com.amazonaws.${AWS::Region}.s3
-      SubnetIds: 
-        - !Ref PrivateSubnet1
-        - !Ref PrivateSubnet2
       VpcEndpointType: Gateway
       VpcId: !Ref Vpc
 
@@ -277,10 +236,3 @@ Outputs:
     Value: !Ref ElasticsearchSecurityGroup
     Export:
       Name: !Sub ${StackName}-ElasticsearchSecurityGroup
-
-  VpceSecurityGroup:
-    Description: Security group for VPC Endpoint
-    Value: !Ref VpceSecurityGroup
-    Export:
-      Name: !Sub ${StackName}-VpceSecurityGroup
-
