@@ -55,5 +55,5 @@ Resources:
         StackName: !Ref AWS::StackName
         TagKey: !Ref TagKey
         TagValue: !Ref TagValue
-        ApiGatewayRole: !GetAtt IamStack.Outputs.ApiGatewayRole
+        ApiGatewayRoleArn: !GetAtt IamStack.Outputs.ApiGatewayRoleArn
       TimeoutInMinutes: 300

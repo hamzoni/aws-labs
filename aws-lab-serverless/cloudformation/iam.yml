@@ -85,13 +85,25 @@ Resources:
 
 Outputs:
   ApiGatewayRole:
-    Description: ApiGatewayRole ARN
+    Description: ApiGatewayRole Name
     Value: !Ref ApiGatewayRole
     Export:
       Name: !Sub ${StackName}-ApiGatewayRole
 
+  ApiGatewayRoleArn:
+    Description: ApiGatewayRole ARN
+    Value: !Ref ApiGatewayRole.Arn
+    Export:
+      Name: !Sub ${StackName}-ApiGatewayRoleArn
+
   LambdaRole:
-    Description: LambdaRole ARN
+    Description: LambdaRole Name
     Value: !Ref LambdaRole
     Export:
       Name: !Sub ${StackName}-LambdaRole
+
+  LambdaRoleArn:
+    Description: LambdaRole ARN
+    Value: !Ref LambdaRole
+    Export:
+      Name: !Sub ${StackName}-LambdaRoleArn

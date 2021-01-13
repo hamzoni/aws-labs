@@ -1,6 +1,3 @@
-# This is the SAM template that represents the architecture of your serverless application
-# https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/serverless-sam-template-basics.html
-
 AWSTemplateFormatVersion: 2010-09-09
 Description: >-
   aws-labs
@@ -8,22 +5,26 @@ Description: >-
 Transform:
 - AWS::Serverless-2016-10-31
 
+Globals:
+  Function:
+    Runtime: nodejs12.x
+    MemorySize: 128
+    Timeout: 100
+    Handler: index.handler
+    Policies:
+      - DynamoDBCrudPolicy:
+          TableName: !Ref SampleTable
+    Environment:
+      Variables:
+        TABLE_NAME: !Ref SampleTable
+
 Resources:
 
   indexFunction:
     Type: AWS::Serverless::Function
     Properties:
-      Handler: src/handlers/get-all-items.getAllItemsHandler
-      Runtime: nodejs12.x
-      MemorySize: 128
-      Timeout: 100
+      Handler: src/handlers/book-management.getAllItemsHandler
       Description: A simple example includes a HTTP get method to get all items from a DynamoDB table.
-      Policies:
-        - DynamoDBCrudPolicy:
-            TableName: !Ref SampleTable
-      Environment:
-        Variables:
-          SAMPLE_TABLE: !Ref SampleTable
       Events:
         Api:
           Type: Api
@@ -34,19 +35,8 @@ Resources:
   showFunction:
     Type: AWS::Serverless::Function
     Properties:
-      Handler: src/handlers/get-by-id.getByIdHandler
-      Runtime: nodejs12.x
-      MemorySize: 128
-      Timeout: 100
+      Handler: src/handlers/book-management.getByIdHandler
       Description: A simple example includes a HTTP get method to get one item by id from a DynamoDB table.
-      Policies:
-        # Give Create/Read/Update/Delete Permissions to the SampleTable
-        - DynamoDBCrudPolicy:
-            TableName: !Ref SampleTable
-      Environment:
-        Variables:
-          # Make table name accessible as environment variable from function code during execution
-          SAMPLE_TABLE: !Ref SampleTable
       Events:
         Api:
           Type: Api
@@ -57,17 +47,8 @@ Resources:
   createFunction:
     Type: AWS::Serverless::Function
     Properties:
-      Handler: src/handlers/put-item.putItemHandler
-      Runtime: nodejs12.x
-      MemorySize: 128
-      Timeout: 100
+      Handler: src/handlers/book-management.putItemHandler
       Description: A simple example includes a HTTP post method to add one item to a DynamoDB table.
-      Policies:
-        - DynamoDBCrudPolicy:
-            TableName: !Ref SampleTable
-      Environment:
-        Variables:
-          SAMPLE_TABLE: !Ref SampleTable
       Events:
         Api:
           Type: Api
@@ -78,17 +59,8 @@ Resources:
   updateFunction:
     Type: AWS::Serverless::Function
     Properties:
-      Handler: src/handlers/put-item.putItemHandler
-      Runtime: nodejs12.x
-      MemorySize: 128
-      Timeout: 100
+      Handler: src/handlers/book-management.putItemHandler
       Description: A simple example includes a HTTP post method to add one item to a DynamoDB table.
-      Policies:
-        - DynamoDBCrudPolicy:
-            TableName: !Ref SampleTable
-      Environment:
-        Variables:
-          SAMPLE_TABLE: !Ref SampleTable
       Events:
         Api:
           Type: Api
@@ -99,17 +71,8 @@ Resources:
   removeFunction:
     Type: AWS::Serverless::Function
     Properties:
-      Handler: src/handlers/put-item.putItemHandler
-      Runtime: nodejs12.x
-      MemorySize: 128
-      Timeout: 100
+      Handler: src/handlers/book-management.putItemHandler
       Description: A simple example includes a HTTP post method to add one item to a DynamoDB table.
-      Policies:
-        - DynamoDBCrudPolicy:
-            TableName: !Ref SampleTable
-      Environment:
-        Variables:
-          SAMPLE_TABLE: !Ref SampleTable
       Events:
         Api:
           Type: Api

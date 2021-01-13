@@ -27,6 +27,8 @@ Resources:
     Type: AWS::DynamoDB::Table
     Properties: 
       AttributeDefinitions:
+        - AttributeName: id
+          AttributeType: 'S'
         - AttributeName: owner_id
           AttributeType: 'S'
         - AttributeName: owner_name
@@ -37,24 +39,22 @@ Resources:
           AttributeType: 'N'
       BillingMode: PROVISIONED
       KeySchema: 
-        - AttributeName: name
+        - AttributeName: id
           KeyType: HASH # partition key
-        - AttributeName: owner_id
+        - AttributeName: name
           KeyType: RANGE # sort key
       LocalSecondaryIndexes: 
-        - IndexName: OwnerNameIndex
+        - IndexName: IdIndex
           KeySchema: 
-            - AttributeName: name
+            - AttributeName: id
               KeyType: HASH # partition key
-            - AttributeName: owner_name
+            - AttributeName: name
               KeyType: RANGE # sort key
-          Projection: 
-            ProjectionType: ALL
       GlobalSecondaryIndexes:
         - IndexName: PriceIndex
           KeySchema: 
             - AttributeName: name
-              KeyType: HASH # partition key
+              KeyType: RANGE # partition key
             - AttributeName: price
               KeyType: RANGE # sort key
           Projection: 

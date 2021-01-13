@@ -7,7 +7,7 @@ Parameters:
   TagValue:
     Type: String
 
-  ApiGatewayRole:
+  ApiGatewayRoleArn:
     Type: String
 
 Resources:
@@ -18,16 +18,9 @@ Resources:
         RecoveryMechanisms: 
           - Name: verified_email
             Priority: 1
-          - Name: admin_only
-            Priority: 2
       AdminCreateUserConfig: 
         AllowAdminCreateUserOnly: false
-        UnusedAccountValidityDays: 7
-      MfaConfiguration: OFF
-      AliasAttributes: 
-        - email
-      AutoVerifiedAttributes: 
-        - phone_number
+      MfaConfiguration: 'OFF'
       DeviceConfiguration: 
         ChallengeRequiredOnNewDevice: false
         DeviceOnlyRememberedOnUserPrompt: false
@@ -63,7 +56,7 @@ Resources:
       - RestApi
       - CognitoUserPool
     Properties: 
-      AuthorizerCredentials: !Ref ApiGatewayRole
+      AuthorizerCredentials: !Ref ApiGatewayRoleArn
       IdentitySource: COGNITO_USER_POOLS
       Name: !Ref StackName
       ProviderARNs: 
@@ -77,7 +70,7 @@ Resources:
     DependsOn: RestApi
     Properties: 
       ParentId: !GetAtt RestApi.RootResourceId
-      PathPart: /books
+      PathPart: books
       RestApiId: !Ref RestApi
 
   AgwImageResource:
@@ -85,7 +78,7 @@ Resources:
     DependsOn: RestApi
     Properties: 
       ParentId: !GetAtt RestApi.RootResourceId
-      PathPart: /images
+      PathPart: images
       RestApiId: !Ref RestApi
 
   # API Gateway Method

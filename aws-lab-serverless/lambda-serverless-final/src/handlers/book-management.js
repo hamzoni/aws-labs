@@ -1,6 +1,6 @@
 const dynamodb = require("aws-sdk/clients/dynamodb");
 const DB = new dynamodb.DocumentClient();
-const TABLE_NAME = process.env.SAMPLE_TABLE;
+const TABLE_NAME = process.env.TABLE_NAME;
 
 exports.create = async (event) => {
   if (event.httpMethod !== "POST") {
