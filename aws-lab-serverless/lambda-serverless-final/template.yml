@@ -10,7 +10,7 @@ Globals:
     Runtime: nodejs12.x
     MemorySize: 128
     Timeout: 100
-    Handler: index.handler
+    Handler: src/handlers/book-management.index
     Policies:
       - DynamoDBCrudPolicy:
           TableName: !Ref SampleTable
@@ -23,8 +23,8 @@ Resources:
   indexFunction:
     Type: AWS::Serverless::Function
     Properties:
-      Handler: src/handlers/book-management.getAllItemsHandler
-      Description: A simple example includes a HTTP get method to get all items from a DynamoDB table.
+      Handler: src/handlers/book-management.index
+      Description: Function to list books
       Events:
         Api:
           Type: Api
@@ -35,8 +35,8 @@ Resources:
   showFunction:
     Type: AWS::Serverless::Function
     Properties:
-      Handler: src/handlers/book-management.getByIdHandler
-      Description: A simple example includes a HTTP get method to get one item by id from a DynamoDB table.
+      Handler: src/handlers/book-management.show
+      Description: Function to show a book
       Events:
         Api:
           Type: Api
@@ -47,8 +47,8 @@ Resources:
   createFunction:
     Type: AWS::Serverless::Function
     Properties:
-      Handler: src/handlers/book-management.putItemHandler
-      Description: A simple example includes a HTTP post method to add one item to a DynamoDB table.
+      Handler: src/handlers/book-management.create
+      Description: Function to create a book
       Events:
         Api:
           Type: Api
@@ -59,8 +59,8 @@ Resources:
   updateFunction:
     Type: AWS::Serverless::Function
     Properties:
-      Handler: src/handlers/book-management.putItemHandler
-      Description: A simple example includes a HTTP post method to add one item to a DynamoDB table.
+      Handler: src/handlers/book-management.update
+      Description: Function to update a book
       Events:
         Api:
           Type: Api
@@ -71,8 +71,8 @@ Resources:
   removeFunction:
     Type: AWS::Serverless::Function
     Properties:
-      Handler: src/handlers/book-management.putItemHandler
-      Description: A simple example includes a HTTP post method to add one item to a DynamoDB table.
+      Handler: src/handlers/book-management.remove
+      Description: Function to delete a book
       Events:
         Api:
           Type: Api

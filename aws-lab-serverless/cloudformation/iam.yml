@@ -92,7 +92,7 @@ Outputs:
 
   ApiGatewayRoleArn:
     Description: ApiGatewayRole ARN
-    Value: !Ref ApiGatewayRole.Arn
+    Value: !GetAtt ApiGatewayRole.Arn
     Export:
       Name: !Sub ${StackName}-ApiGatewayRoleArn
 

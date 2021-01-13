@@ -57,10 +57,10 @@ Resources:
       - CognitoUserPool
     Properties: 
       AuthorizerCredentials: !Ref ApiGatewayRoleArn
-      IdentitySource: COGNITO_USER_POOLS
+      IdentitySource: method.request.header.Authorization
       Name: !Ref StackName
       ProviderARNs: 
-        - !Ref CognitoUserPool
+        - !GetAtt CognitoUserPool.Arn
       RestApiId: !Ref RestApi
       Type: COGNITO_USER_POOLS
 

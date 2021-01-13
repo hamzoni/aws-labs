@@ -83,7 +83,7 @@ exports.index = async (event) => {
   }
   console.info("received:", event);
 
-  var params = {
+  const params = {
     TableName: tableName,
   };
   const data = await DB.scan(params).promise();
