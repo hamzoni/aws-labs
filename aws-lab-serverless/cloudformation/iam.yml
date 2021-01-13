@@ -7,7 +7,7 @@ Parameters:
   TagValue:
     Type: String
 
-Resources:  
+Resources:
 
   # Lambda Execution Role
   LambdaPolicy:
@@ -104,6 +104,6 @@ Outputs:
 
   LambdaRoleArn:
     Description: LambdaRole ARN
-    Value: !Ref LambdaRole
+    Value: !GetAtt LambdaRole.Arn
     Export:
       Name: !Sub ${StackName}-LambdaRoleArn

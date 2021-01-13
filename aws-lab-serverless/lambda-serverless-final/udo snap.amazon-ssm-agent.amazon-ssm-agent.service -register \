@@ -1,0 +1,14 @@
+[0;1;32m●[0m snap.amazon-ssm-agent.amazon-ssm-agent.service - Service for snap application amazon-ssm-agent.amazon-ssm-agent
+     Loaded: loaded (/etc/systemd/system/snap.amazon-ssm-agent.amazon-ssm-agent.service; enabled; vendor preset: enabled)
+     Active: [0;1;32mactive (running)[0m since Wed 2021-01-13 10:44:17 +07; 2min 0s ago
+   Main PID: 121280 (amazon-ssm-agen)
+      Tasks: 10 (limit: 19007)
+     Memory: 10.0M
+     CGroup: /system.slice/snap.amazon-ssm-agent.amazon-ssm-agent.service
+             └─121280 /snap/amazon-ssm-agent/2996/amazon-ssm-agent
+
+Jan 13 10:44:17 qt systemd[1]: Started Service for snap application amazon-ssm-agent.amazon-ssm-agent.
+Jan 13 10:44:17 qt amazon-ssm-agent.amazon-ssm-agent[121280]: Error occurred fetching the seelog config file path:  open /etc/amazon/ssm/seelog.xml: no such file or directory
+Jan 13 10:44:17 qt amazon-ssm-agent.amazon-ssm-agent[121280]: Initializing new seelog logger
+Jan 13 10:44:17 qt amazon-ssm-agent.amazon-ssm-agent[121280]: New Seelog Logger Creation Complete
+Jan 13 10:44:17 qt amazon-ssm-agent.amazon-ssm-agent[121280]: 2021-01-13 10:44:17 ERROR Error adding the directory to watcher: no such file or directory

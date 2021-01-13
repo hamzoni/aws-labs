@@ -72,10 +72,24 @@ Resources:
       RefreshTokenValidity: 30
       UserPoolId: !Ref CognitoUserPool
 
+  UserPoolRecordSetRoute53:
+    Type: AWS::Route53::RecordSet
+    Properties: 
+      ResourceRecords: 
+        - 127.0.0.1
+      HostedZoneName: fptu.net
+      Name: !Sub ${StackName}.fptu.net
+      Region: !Ref AWS::Region
+      ResourceRecords: 
+        - String
+      TTL: 300
+      Type: A
+
   UserPoolDomain:
     Type: AWS::Cognito::UserPoolDomain
     DependsOn:
       - CognitoUserPool
+      - UserPoolRecordSetRoute53
     Properties: 
       CustomDomainConfig: 
         CertificateArn: !Ref CertificateArn
