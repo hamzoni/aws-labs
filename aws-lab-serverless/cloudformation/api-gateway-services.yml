@@ -9,6 +9,9 @@ Parameters:
 
   ApiGatewayRoleArn:
     Type: String
+  CertificateArn:
+    Type: String
+    Default: arn:aws:acm:us-west-2:900171207117:certificate/60fa02b4-870c-44be-85ca-3eb6aaf32f4e
 
 Resources:
   CognitoUserPool:
@@ -37,6 +40,61 @@ Resources:
       UsernameConfiguration: 
         CaseSensitive: false
       UserPoolName: !Ref StackName
+
+  CognitoUserPoolClient:
+    Type: AWS::Cognito::UserPoolClient
+    DependsOn:
+      - CognitoUserPool
+    Properties: 
+      AccessTokenValidity: 3600
+      AllowedOAuthFlows: 
+        - code
+        - implicit
+        - client_credentials
+      AllowedOAuthFlowsUserPoolClient: true
+      AllowedOAuthScopes: 
+        - email
+        - openid
+        - profile
+      CallbackURLs: 
+        - http://localhost
+      ClientName: !Ref StackName
+      DefaultRedirectURI: http://localhost
+      ExplicitAuthFlows: 
+        - ALLOW_ADMIN_USER_PASSWORD_AUTH
+        - ALLOW_USER_SRP_AUTH
+        - ALLOW_REFRESH_TOKEN_AUTH
+      GenerateSecret: false
+      IdTokenValidity: 3600
+      LogoutURLs: 
+        - http://localhost/logout
+      PreventUserExistenceErrors: ENABLED
+      RefreshTokenValidity: 30
+      UserPoolId: !Ref CognitoUserPool
+
+  UserPoolDomain:
+    Type: AWS::Cognito::UserPoolDomain
+    DependsOn:
+      - CognitoUserPool
+    Properties: 
+      CustomDomainConfig: 
+        CertificateArn: !Ref CertificateArn
+      Domain: !Sub ${StackName}.fptu.net
+      UserPoolId: !Ref CognitoUserPool
+
+  UserPoolUser:
+    Type: AWS::Cognito::UserPoolUser
+    DependsOn:
+      - CognitoUserPool
+    Properties: 
+      DesiredDeliveryMediums: 
+        - EMAIL
+      MessageAction: SUPPRESS
+      UserAttributes: 
+        - email: taquy.se@gmail.com
+        - email_verified: true
+      Username: taquy.se@gmail.com
+      UserPoolId: !Ref CognitoUserPool
 
   RestApi:
     Type: AWS::ApiGateway::RestApi

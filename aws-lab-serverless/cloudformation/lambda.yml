@@ -1,0 +1,53 @@
+Parameters:
+  StackName:
+    Type: String
+
+  TagKey:
+    Type: String
+  TagValue:
+    Type: String
+
+  SecurityGroupId:
+    Type: String
+  SubnetId1:
+    Type: String
+  SubnetId2:
+    Type: String
+  RoleArn:
+    Type: String
+
+  # BucketToCleanUp:
+  #   Type: String
+
+Resources:
+  LambdaCleanUpS3Bucket:
+    Type: AWS::Lambda::Function
+    Properties: 
+      Code: 
+        S3Bucket: aws-lab-cloudformation
+        S3Key: lambda.zip
+      Description: Delete S3 Bucket when delete cloudformation stack
+      FunctionName: !Sub ${StackName}-clean-up-s3
+      Handler: cleanup-s3-bucket.lambda_handler
+      MemorySize: 128
+      PackageType: Zip
+      Role: !Ref RoleArn
+      Runtime: nodejs12.x
+      Tags: 
+        - Key: !Ref TagKey
+          Value: !Ref TagValue
+      Timeout: 100
+      TracingConfig: 
+         Mode: Active
+      VpcConfig: 
+        SecurityGroupIds: 
+          - !Ref SecurityGroupId
+        SubnetIds: 
+          - !Ref SubnetId1
+          - !Ref SubnetId2
+
+  # CleanupBucketOnDelete:
+  #   Type: Custom::CleanUpBucket
+  #   Properties:
+  #     ServiceToken: !GetAtt LambdaCleanUpS3Bucket.Arn
+  #     BucketName: !Ref BucketToCleanUp

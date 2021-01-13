@@ -170,6 +170,29 @@ Resources:
           Value: !Ref TagValue
       VpcId: !Ref Vpc
 
+  LambdaSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    DependsOn: Vpc
+    Properties: 
+      GroupDescription: Security group for Elasticsearch
+      GroupName: !Sub ${StackName}-lambda
+      SecurityGroupEgress: 
+        - CidrIp: !Ref InternetCidrIpBlocks
+          Description: Allow access to anywhere
+          FromPort: -1
+          IpProtocol: -1
+          ToPort: -1
+      SecurityGroupIngress: 
+        - CidrIp: !GetAtt Vpc.CidrBlock
+          Description: Allow access from anywhere
+          IpProtocol: -1
+          FromPort: -1
+          ToPort: -1
+      Tags: 
+        - Key: !Ref TagKey
+          Value: !Ref TagValue
+      VpcId: !Ref Vpc
+
   # VPC Endpoints
   VPCEndpointS3:
     Type: AWS::EC2::VPCEndpoint
@@ -236,3 +259,8 @@ Outputs:
     Value: !Ref ElasticsearchSecurityGroup
     Export:
       Name: !Sub ${StackName}-ElasticsearchSecurityGroup
+  LambdaSecurityGroup:
+    Description: Security group for Lambda function
+    Value: !Ref LambdaSecurityGroup
+    Export:
+      Name: !Sub ${StackName}-LambdaSecurityGroup

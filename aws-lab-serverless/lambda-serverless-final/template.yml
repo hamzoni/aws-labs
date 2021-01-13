@@ -3,7 +3,10 @@ Description: >-
   aws-labs
 
 Transform:
-- AWS::Serverless-2016-10-31
+  - AWS::Serverless-2016-10-31
+
+Parameters:
+  TableName: taquy
 
 Globals:
   Function:
@@ -13,69 +16,38 @@ Globals:
     Handler: src/handlers/book-management.index
     Policies:
       - DynamoDBCrudPolicy:
-          TableName: !Ref SampleTable
+          TableName: !Ref TableName
     Environment:
       Variables:
-        TABLE_NAME: !Ref SampleTable
+        TABLE_NAME: !Ref TableName
 
 Resources:
-
   indexFunction:
     Type: AWS::Serverless::Function
     Properties:
       Handler: src/handlers/book-management.index
       Description: Function to list books
-      Events:
-        Api:
-          Type: Api
-          Properties:
-            Path: /
-            Method: GET
 
   showFunction:
     Type: AWS::Serverless::Function
     Properties:
       Handler: src/handlers/book-management.show
       Description: Function to show a book
-      Events:
-        Api:
-          Type: Api
-          Properties:
-            Path: /{id}
-            Method: GET
- 
+
   createFunction:
     Type: AWS::Serverless::Function
     Properties:
       Handler: src/handlers/book-management.create
       Description: Function to create a book
-      Events:
-        Api:
-          Type: Api
-          Properties:
-            Path: /
-            Method: POST
 
   updateFunction:
     Type: AWS::Serverless::Function
     Properties:
       Handler: src/handlers/book-management.update
       Description: Function to update a book
-      Events:
-        Api:
-          Type: Api
-          Properties:
-            Path: /
-            Method: POST
 
   removeFunction:
     Type: AWS::Serverless::Function
     Properties:
       Handler: src/handlers/book-management.remove
       Description: Function to delete a book
-      Events:
-        Api:
-          Type: Api
-          Properties:
-            Path: /
-            Method: POST

@@ -23,6 +23,7 @@ Parameters:
     Type: String
 
 Resources:
+
   DynamoDbTable:
     Type: AWS::DynamoDB::Table
     Properties: 
